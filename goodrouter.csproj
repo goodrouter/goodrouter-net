@@ -9,6 +9,7 @@
     <Version>0.0.0</Version>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+    <PackageLicenseExpression>ISC</PackageLicenseExpression>
   </PropertyGroup>
 
   <ItemGroup>
