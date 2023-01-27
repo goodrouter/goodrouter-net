@@ -3,12 +3,13 @@ include:
 
 stages:
   - test
+  - publish
 
 test-unit:
   stage: test
   image: bitnami/dotnet-sdk:6
   script:
-    - dotnet test --configuration Debug --collect "XPlat Code Coverage"
+    - dotnet test --collect "XPlat Code Coverage"
     - mkdir coverage
     - cp TestResults/*/coverage.cobertura.xml coverage/cobertura-coverage.xml
   artifacts:
@@ -22,3 +23,12 @@ test-lint:
   image: bitnami/dotnet-sdk:6
   script:
     - dotnet format --verify-no-changes
+
+publish-nuget:
+  stage: publish
+  rules:
+    - if: $CI_COMMIT_REF_PROTECTED && $CI_COMMIT_TAG =~ /^v/
+  image: bitnami/dotnet-sdk:6
+  script:
+    - dotnet pack --property Version=${CI_COMMIT_TAG:1}
+    - dotnet nuget push --api-key $NUGET_API_KEY --source https://api.nuget.org/v3/index.json  bin/Release/*.nupkg

@@ -5,6 +5,8 @@
     <RootNamespace>goodrouter</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <PackRelease>true</PackRelease>
+    <PublishRelease>true</PublishRelease>
   </PropertyGroup>
 
   <ItemGroup>
