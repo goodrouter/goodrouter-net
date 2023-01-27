@@ -1,0 +1,25 @@
+include:
+  - template: Security/SAST.gitlab-ci.yml
+
+stages:
+  - test
+
+test-unit:
+  stage: test
+  image: bitnami/dotnet-sdk:7
+  script:
+    - dotnet test --configuration Debug --collect "XPlat Code Coverage"
+    - mkdir coverage
+    - cp TestResults/*/coverage.cobertura.xml coverage/cobertura-coverage.xml
+  artifacts:
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage/cobertura-coverage.xml
+
+test-lint:
+  stage: test
+  image: bitnami/dotnet-sdk:7
+  script:
+    - dotnet format --verify-no-changes
+
