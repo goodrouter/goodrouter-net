@@ -5,8 +5,10 @@
     <RootNamespace>goodrouter</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <IsPackable>true</IsPackable>
     <PackRelease>true</PackRelease>
     <PublishRelease>true</PublishRelease>
+    <Version>0.0.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
