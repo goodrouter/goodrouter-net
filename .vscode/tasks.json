@@ -2,18 +2,20 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "build",
+            "label": "test",
             "command": "dotnet",
             "type": "process",
             "args": [
-                "build",
+                "test",
                 "${workspaceFolder}/goodrouter.csproj",
                 "/property:GenerateFullPaths=true",
-                "/consoleloggerparameters:NoSummary"
+                "/consoleloggerparameters:NoSummary",
+                "--collect",
+                "XPlat Code Coverage"
             ],
             "problemMatcher": "$msCompile",
             "group": {
-                "kind": "build",
+                "kind": "test",
                 "isDefault": true
             }
         },
