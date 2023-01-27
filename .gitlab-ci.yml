@@ -6,7 +6,7 @@ stages:
 
 test-unit:
   stage: test
-  image: bitnami/dotnet-sdk:7
+  image: bitnami/dotnet-sdk:6
   script:
     - dotnet test --configuration Debug --collect "XPlat Code Coverage"
     - mkdir coverage
@@ -19,7 +19,6 @@ test-unit:
 
 test-lint:
   stage: test
-  image: bitnami/dotnet-sdk:7
+  image: bitnami/dotnet-sdk:6
   script:
     - dotnet format --verify-no-changes
-
