@@ -6,7 +6,6 @@
 
 /obj/
 /bin/
-/docs/
 /TestResults/
 
 !/.vscode/
