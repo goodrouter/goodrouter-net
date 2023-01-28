@@ -1,8 +1,12 @@
 .*
+
 !.gitignore
 !.editorconfig
 !.gitlab-ci.yml
-!/.vscode/
+
 /obj/
 /bin/
+/docs/
 /TestResults/
+
+!/.vscode/

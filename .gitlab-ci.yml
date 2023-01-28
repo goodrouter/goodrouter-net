@@ -2,12 +2,26 @@ include:
   - template: Security/SAST.gitlab-ci.yml
 
 stages:
+  - intialize
   - test
   - publish
+
+prepare:
+  stage: intialize
+  image: bitnami/dotnet-sdk:6
+  script:
+    - dotnet tool install --global docfx
+    - /app/.dotnet/tools/docfx
+  artifacts:
+    paths:
+      - obj
+      - bin
+      - docs
 
 test-unit:
   stage: test
   image: bitnami/dotnet-sdk:6
+  dependencies: [prepare]
   script:
     - dotnet test --collect "XPlat Code Coverage"
     - mkdir coverage
@@ -21,6 +35,7 @@ test-unit:
 test-lint:
   stage: test
   image: bitnami/dotnet-sdk:6
+  dependencies: [prepare]
   script:
     - dotnet format --verify-no-changes
 
@@ -29,6 +44,16 @@ publish-nuget:
   rules:
     - if: $CI_COMMIT_REF_PROTECTED && $CI_COMMIT_TAG =~ /^v/
   image: bitnami/dotnet-sdk:6
+  dependencies: [prepare]
   script:
     - dotnet pack --configuration Release --property Version=${CI_COMMIT_TAG:1}
     - dotnet nuget push --api-key $NUGET_API_KEY --source https://api.nuget.org/v3/index.json 'bin/Release/*.nupkg'
+
+publish-cloudflare:
+  stage: publish
+  rules:
+    - if: $CI_COMMIT_REF_PROTECTED && $CI_COMMIT_TAG =~ /^v/
+  image: node:18
+  dependencies: [prepare]
+  script:
+    - npx wrangler pages publish ./docs --commit-dirty=true --project-name $CI_PROJECT_NAME

@@ -1,0 +1,25 @@
+{
+  "metadata": [
+    {
+      "src": [
+        {
+          "files": [
+            "*.csproj"
+          ]
+        }
+      ],
+      "dest": ".tmp/docs"
+    }
+  ],
+  "build": {
+    "content": [
+      {
+        "files": [
+          "*.{md,yml}"
+        ],
+        "src": ".tmp/docs"
+      }
+    ],
+    "dest": "docs"
+  }
+}
