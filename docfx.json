@@ -8,16 +8,21 @@
           ]
         }
       ],
-      "dest": ".tmp/docs"
+      "dest": ".tmp/api"
     }
   ],
   "build": {
     "content": [
       {
         "files": [
-          "*.{md,yml}"
+          "api/*.{md,yml}"
         ],
-        "src": ".tmp/docs"
+        "src": ".tmp"
+      },
+      {
+        "files": [
+          "README.md"
+        ]
       }
     ],
     "dest": "docs"
