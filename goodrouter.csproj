@@ -14,20 +14,27 @@
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
         <Authors>LuvDaSun B.V.</Authors>
+        <PackageIcon>goodrouter-logo-2.png</PackageIcon>
+        <Description>A good, low level, bidirectional router</Description>
+        <Copyright>Copyright 2023 LuvDaSun Software B.V.</Copyright>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)'=='Release'">
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
     </PropertyGroup>
 
     <ItemGroup>
         <Compile Include="src\**\*.cs" />
         <None Include="README.md" Pack="true" PackagePath="/" />
         <None Include="LICENSE.md" Pack="true" PackagePath="/" />
+        <None Include="assets\goodrouter-logo-2.png" Pack="true" PackagePath="/" />
     </ItemGroup>
 
     <ItemGroup Condition="'$(Configuration)'=='Release'">
         <Compile Remove="src\**\*.spec.cs" />
+
+        <PackageReference Include="Microsoft.SourceLink.GitLab" Version="1.0.0" PrivateAssets="All" />
     </ItemGroup>
 
     <ItemGroup Condition="'$(Configuration)'!='Release'">
