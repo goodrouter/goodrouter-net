@@ -13,6 +13,10 @@
         <Authors>LuvDaSun B.V.</Authors>
     </PropertyGroup>
 
+    <PropertyGroup Condition="'$(Configuration)'=='Release'">
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    </PropertyGroup>
+
     <ItemGroup>
         <Compile Include="src\**\*.cs" />
         <Compile Remove="src\**\*.spec.cs" />
