@@ -1,3 +1,8 @@
+variables:
+  # from https://semver.org/
+  SEMVER_REGEX: >
+    ^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$
+
 include:
   - template: Security/SAST.gitlab-ci.yml
 
@@ -30,11 +35,13 @@ publish-nuget:
     - if: $CI_COMMIT_REF_PROTECTED && $CI_COMMIT_TAG =~ /^v/
   image: bitnami/dotnet-sdk:6
   script:
+    # see https://learn.microsoft.com/en-us/dotnet/standard/library-guidance/versioning 
     - >
         dotnet pack 
         --configuration Release
         --property Version=${CI_COMMIT_TAG:1}
-        --property FileVersion=${CI_COMMIT_TAG:1}.${CI_JOB_ID}
+        --property AssemblyVersion=$(echo ${CI_COMMIT_TAG:1} | perl -pe "s/$SEMVER_REGEX/\1.0.0.0/")
+        --property FileVersion=$(echo ${CI_COMMIT_TAG:1} | perl -pe "s/$SEMVER_REGEX/\1.\2.\3.${CI_JOB_ID}/")
     - >
         dotnet nuget push
         --api-key $NUGET_API_KEY
