@@ -51,6 +51,15 @@ public class Route : IEquatable<Route>
         this.parameters = parameters;
     }
 
+    /// <summary>
+    /// Checks if the provided other Route is equal to this one
+    /// </summary>
+    /// <param name="other">
+    /// Route to compare to this
+    /// </param>
+    /// <returns>
+    /// True is the provided other route is considered equal to this one
+    /// </returns>
     public bool Equals(Route? other)
     {
         if (other == null)

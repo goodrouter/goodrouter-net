@@ -23,6 +23,8 @@
     <PropertyGroup Condition="'$(Configuration)'=='Release'">
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+        <SignAssembly>true</SignAssembly>
+        <AssemblyOriginatorKeyFile>goodrouter.snk</AssemblyOriginatorKeyFile>
     </PropertyGroup>
 
     <ItemGroup>
