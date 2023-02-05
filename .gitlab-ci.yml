@@ -10,13 +10,16 @@ stages:
   - test
   - publish
 
-test-unit:
+test-spec:
   stage: test
   image: bitnami/dotnet-sdk:6
   script:
-    - dotnet test --collect "XPlat Code Coverage"
+    - >
+        dotnet test
+        --configuration Release
+        --collect "XPlat Code Coverage"
     - mkdir coverage
-    - cp TestResults/*/coverage.cobertura.xml coverage/cobertura-coverage.xml
+    - cp Goodrouter.Spec/TestResults/*/coverage.cobertura.xml coverage/cobertura-coverage.xml
   artifacts:
     reports:
       coverage_report:
@@ -27,7 +30,9 @@ test-lint:
   stage: test
   image: bitnami/dotnet-sdk:6
   script:
-    - dotnet format --verify-no-changes
+    - >
+      dotnet format
+      --verify-no-changes
 
 publish-nuget:
   stage: publish
@@ -37,7 +42,7 @@ publish-nuget:
   script:
     # see https://learn.microsoft.com/en-us/dotnet/standard/library-guidance/versioning 
     - >
-        dotnet pack 
+        dotnet pack Goodrouter
         --configuration Release
         --property Version=${CI_COMMIT_TAG:1}
         --property AssemblyVersion=$(echo ${CI_COMMIT_TAG:1} | perl -pe "s/$SEMVER_REGEX/\1.0.0.0/")
@@ -45,4 +50,4 @@ publish-nuget:
     - >
         dotnet nuget push
         --api-key $NUGET_API_KEY
-        --source https://api.nuget.org/v3/index.json 'bin/Release/*.nupkg'
+        --source https://api.nuget.org/v3/index.json 'Goodrouter/bin/Release/*.nupkg'

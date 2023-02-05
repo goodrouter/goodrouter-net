@@ -1,4 +1,4 @@
-namespace goodrouter;
+namespace Goodrouter.Spec;
 
 using Xunit;
 

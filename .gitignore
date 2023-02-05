@@ -5,8 +5,9 @@
 !.editorconfig
 !.gitlab-ci.yml
 
-/obj/
-/bin/
-/TestResults/
+obj/
+bin/
+TestResults/
+BenchmarkDotNet.Artifacts/
 
 !/.vscode/

@@ -1,4 +1,4 @@
-namespace goodrouter;
+namespace Goodrouter;
 
 /// <summary>
 /// This is a route...

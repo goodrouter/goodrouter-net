@@ -1,4 +1,4 @@
-namespace goodrouter;
+namespace Goodrouter;
 
 internal class RouteNode : IComparable<RouteNode>, IEquatable<RouteNode>
 {
@@ -234,6 +234,10 @@ internal class RouteNode : IComparable<RouteNode>, IEquatable<RouteNode>
         );
         if (childNode == null)
         {
+            if (addNode.Parent != null)
+            {
+                addNode.Parent.RemoveChild(addNode);
+            }
             receivingNode.AddChild(addNode);
             return addNode;
         }

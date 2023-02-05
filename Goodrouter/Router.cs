@@ -1,4 +1,4 @@
-namespace goodrouter;
+namespace Goodrouter;
 
 /// <summary>
 /// This is the router!
