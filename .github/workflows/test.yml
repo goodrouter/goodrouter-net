@@ -29,6 +29,6 @@ jobs:
       TEST_VERSION: v0.3.1
     steps:
       - uses: actions/checkout@v3
-      - run: echo ${TEST_VERSION} | perl -pe "s/v(.*)/\1/"
-      - run: echo ${TEST_VERSION} | perl -pe "s/v${SEMVER_REGEX}/\1.0.0.0/"
-      - run: echo ${TEST_VERSION} | perl -pe "s/v${SEMVER_REGEX}/\1.\2.\3.${GITHUB_RUN_ID}/"
+      - run: echo ${TEST_VERSION} | perl -pe "s/^v(.*)$/\1/"
+      - run: echo ${TEST_VERSION} | perl -pe "s/^v(.*)$/\1/" | perl -pe "s/${SEMVER_REGEX}/\1.0.0.0/"
+      - run: echo ${TEST_VERSION} | perl -pe "s/^v(.*)$/\1/" | perl -pe "s/${SEMVER_REGEX}/\1.\2.\3.${GITHUB_RUN_ID}/"
