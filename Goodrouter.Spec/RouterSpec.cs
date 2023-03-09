@@ -16,41 +16,27 @@ public class RouterSpec
         router.InsertRoute("d", "/b/{x}/d");
 
         {
-            var route = router.ParseRoute("/a");
-            Assert.Equal(
-                new Route("a"),
-                route
-            );
+            var (routeKey, routeParameters) = router.ParseRoute("/a");
+            Assert.Equal("a", routeKey);
+            Assert.Equal(new Dictionary<string, string>() { }, routeParameters);
         }
 
         {
-            var route = router.ParseRoute("/b/x");
-            Assert.Equal(
-                new Route("b", new Dictionary<string, string>() {
-                    {"x","x"}
-                }),
-                route
-            );
+            var (routeKey, routeParameters) = router.ParseRoute("/b/x");
+            Assert.Equal("b", routeKey);
+            Assert.Equal(new Dictionary<string, string>() { { "x", "x" } }, routeParameters);
         }
 
         {
-            var route = router.ParseRoute("/b/y/c");
-            Assert.Equal(
-                new Route("c", new Dictionary<string, string>() {
-                    {"x","y"}
-                }),
-                route
-            );
+            var (routeKey, routeParameters) = router.ParseRoute("/b/y/c");
+            Assert.Equal("c", routeKey);
+            Assert.Equal(new Dictionary<string, string>() { { "x", "y" } }, routeParameters);
         }
 
         {
-            var route = router.ParseRoute("/b/z/d");
-            Assert.Equal(
-                new Route("d", new Dictionary<string, string>() {
-                    {"x","z"}
-                }),
-                route
-            );
+            var (routeKey, routeParameters) = router.ParseRoute("/b/z/d");
+            Assert.Equal("d", routeKey);
+            Assert.Equal(new Dictionary<string, string>() { { "x", "x" } }, routeParameters);
         }
 
     }

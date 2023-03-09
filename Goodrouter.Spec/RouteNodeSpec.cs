@@ -9,10 +9,10 @@ public class RouteNodeSpec
     public void RouteNodeSortTest()
     {
         var routeNodes = new RouteNode[]{
-            new RouteNode("aa", "p"),
+            new RouteNode("aa", true),
             new RouteNode("aa"),
             new RouteNode("xx"),
-            new RouteNode("aa", null, "n"),
+            new RouteNode("aa", false, "n"),
             new RouteNode("x")
         };
 
