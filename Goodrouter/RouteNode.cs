@@ -17,6 +17,24 @@ internal class RouteNode : IComparable<RouteNode>, IEquatable<RouteNode>
         }
     }
 
+    private void AddChild(RouteNode node)
+    {
+        if (node.parent != null)
+        {
+            throw new ArgumentException("node already has a parent", "node");
+        }
+
+        node.parent = this;
+        this.children.Add(node);
+    }
+
+    private void RemoveChild(RouteNode node)
+    {
+        node.parent = null;
+        this.children.Remove(node);
+    }
+
+
 
     private RouteNode? parent;
     public RouteNode? Parent
@@ -94,93 +112,30 @@ internal class RouteNode : IComparable<RouteNode>, IEquatable<RouteNode>
         return currentNode;
     }
 
-    public Route? Parse(
-        string path
-    )
-    {
-        return Parse(
-            path,
-            new Dictionary<string, string>()
-        );
-    }
-    public Route? Parse(
+    public (string?, string[], string[]) Parse(
         string path,
-        Dictionary<string, string> parameters
+        int maximumParameterValueLength
     )
     {
-        parameters = new Dictionary<string, string>(parameters);
+        var parameterValues = new string[] { };
 
-        if (this.HasParameter == null)
-        {
-            if (!path.StartsWith(this.Anchor))
-            {
-                return null;
-            }
-
-            path = path.Substring(this.Anchor.Length);
-        }
-        else
-        {
-            if (path.Length == 0)
-            {
-                return null;
-            }
-
-            var index = this.Anchor.Length == 0 ?
-                path.Length :
-                path.IndexOf(this.Anchor);
-            if (index < 0)
-            {
-                return null;
-            }
-
-            var value = path.Substring(0, index);
-
-            path = path.Substring(index + this.Anchor.Length);
-
-            parameters.Add(this.HasParameter, value);
-        }
-
-        foreach (var childNode in this.children)
-        {
-            // find a route in every child node
-            var route = childNode.Parse(
-                (string)path,
-                parameters
-            );
-
-            // if a child node is matches, return that node instead of the current! So child nodes are matches first!
-            if (route != null)
-            {
-                return route;
-            }
-        }
-
-        // if the node had a route name and there is no path left to match against then we found a route
-        if (this.RouteKey != null && path.Length == 0)
-        {
-            return new Route(
-                this.RouteKey,
-                parameters
-            );
-        }
-
-        // we did not found a route :-(
-        return null;
+        throw new NotImplementedException();
     }
 
     public string Stringify(
-        IReadOnlyDictionary<string, string> parameters
+        string[] parameterValues
     )
     {
+        var parameterIndex = parameterValues.Length;
         var path = "";
         var currentNode = this;
         while (currentNode != null)
         {
             path = currentNode.Anchor + path;
-            if (currentNode.HasParameter != null && parameters.ContainsKey(currentNode.HasParameter))
+            if (currentNode.HasParameter)
             {
-                var value = parameters[currentNode.HasParameter];
+                parameterIndex--;
+                var value = parameterValues[parameterIndex];
                 path = value + path;
             }
             currentNode = currentNode.Parent;
@@ -311,7 +266,7 @@ internal class RouteNode : IComparable<RouteNode>, IEquatable<RouteNode>
             routeParameterNames
         );
 
-        childNode.Anchor = childNode.Anchor.Substring(commmonPrefixLength)
+        childNode.Anchor = childNode.Anchor.Substring(commmonPrefixLength);
         childNode.HasParameter = false;
 
         var intermediateNode = new RouteNode(
@@ -402,23 +357,6 @@ internal class RouteNode : IComparable<RouteNode>, IEquatable<RouteNode>
         return (0, null);
     }
 
-    private void AddChild(RouteNode node)
-    {
-        if (node.parent != null)
-        {
-            throw new ArgumentException("node already has a parent", "node");
-        }
-
-        node.parent = this;
-        this.children.Add(node);
-    }
-
-    private void RemoveChild(RouteNode node)
-    {
-        node.parent = null;
-        this.children.Remove(node);
-    }
-
     public int CompareTo(RouteNode? other)
     {
         if (other == null)
@@ -435,15 +373,7 @@ internal class RouteNode : IComparable<RouteNode>, IEquatable<RouteNode>
         }
 
         {
-            var compared = (this.RouteKey == null).CompareTo(other.RouteKey == null);
-            if (compared != 0)
-            {
-                return 0 - compared;
-            }
-        }
-
-        {
-            var compared = (this.HasParameter == null).CompareTo(other.HasParameter == null);
+            var compared = this.HasParameter.CompareTo(other.HasParameter);
             if (compared != 0)
             {
                 return compared;

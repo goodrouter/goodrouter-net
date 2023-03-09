@@ -1,3 +1,5 @@
+using System.Text.RegularExpressions;
+
 /// <summary>
 /// This is the router!
 /// </summary>
@@ -6,22 +8,30 @@ public class Router
     private RouteNode rootNode = new RouteNode();
     private readonly Dictionary<string, RouteNode> leafNodes = new Dictionary<string, RouteNode>();
 
+    private Regex parameterPlaceholderRE = new Regex("\\{(.*?)\\}");
+    private int MaximumParameterValueLength = 20;
+
     /// <summary>
     /// Adds a new route
     /// </summary>
-    /// <param name="name">
+    /// <param name="routeKey">
     /// name of the route
     /// </param>
-    /// <param name="template">
+    /// <param name="routeTemplate">
     /// template for the route, als defines parameters
     /// </param>
-    public void InsertRoute(
-        string name,
-        string template
+    public Router InsertRoute(
+        string routeKey,
+        string routeTemplate
     )
     {
-        var leafNode = this.rootNode.Insert(name, template);
-        this.leafNodes.Add(name, leafNode);
+        var leafNode = this.rootNode.Insert(
+            routeKey,
+            routeTemplate,
+            this.parameterPlaceholderRE
+        );
+        this.leafNodes.Add(routeKey, leafNode);
+        return this;
     }
 
     /// <summary>
@@ -33,30 +43,58 @@ public class Router
     /// <returns>
     /// route that is matches to the path or null if no match is found
     /// </returns>
-    public Route? ParseRoute(
+    public (string?, IReadOnlyDictionary<string, string>) ParseRoute(
         string path
     )
     {
-        var route = this.rootNode.Parse(path);
-        return route;
+        var parameters = new Dictionary<string, string>();
+
+        var (routeKey, parameterNames, parameterValues) = this.rootNode.Parse(
+            path,
+            this.MaximumParameterValueLength
+        );
+
+        for (var index = 0; index < parameterNames.Length; index++)
+        {
+            var parameterName = parameterNames[index];
+            var parameterValue = parameterValues[index];
+            parameters[parameterName] = parameterValue;
+        }
+
+        return (
+            routeKey,
+            parameters
+        );
     }
 
     /// <summary>
     /// Convert a route to a path string.
     /// </summary>
-    /// <param name="route">
+    /// <param name="routeKey">
     /// route to stringify
+    /// </param>
+    /// <param name="routeParameters">
+    /// parameters for the route
     /// </param>
     /// <returns>
     /// string representing the route or null if the route is not found by name
     /// </returns>
     public string? StringifyRoute(
-        Route route
+        string routeKey,
+        IReadOnlyDictionary<string, string> routeParameters
     )
     {
-        var node = this.leafNodes[route.Name];
+        var node = this.leafNodes[routeKey];
         if (node == null) return null;
-        return node.Stringify(route.Parameters);
+
+        var parameterValues = new List<string>();
+        foreach (var parameterName in node.RouteParameterNames)
+        {
+            var parameterValue = routeParameters[parameterName];
+            parameterValues.Add(parameterValue);
+        }
+
+        return node.Stringify(parameterValues.ToArray());
     }
 
 }
