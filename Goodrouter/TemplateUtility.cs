@@ -8,14 +8,40 @@ internal static class TemplateUtility
         Regex parameterPlaceholderRE
     )
     {
-        throw new NotImplementedException();
+        var offsetIndex = 0;
+        foreach (Match match in parameterPlaceholderRE.Matches(routeTemplate))
+        {
+            yield return routeTemplate.Substring(
+                offsetIndex,
+                match.Index
+            );
+            yield return match.Captures[0].Value;
+            offsetIndex = match.Index + match.Length;
+        }
+        yield return routeTemplate.Substring(offsetIndex);
     }
 
     public static IEnumerable<(string, string?)> ParseTemplatePairs(
-        string template,
+        string routeTemplate,
         Regex parameterPlaceholderRE
     )
     {
-        throw new NotImplementedException();
+        var parts = ParseTemplateParts(routeTemplate, parameterPlaceholderRE);
+
+        var index = 0;
+        string? parameter = null;
+        foreach (var part in parts)
+        {
+            if (index % 2 == 0)
+            {
+                yield return (part, parameter);
+            }
+            else
+            {
+                parameter = part;
+            }
+            index++;
+        }
+
     }
 }
