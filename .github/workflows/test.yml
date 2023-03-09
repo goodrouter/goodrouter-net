@@ -17,18 +17,3 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - run: dotnet format --verify-no-changes
-
-  test-v:
-    runs-on: ubuntu-latest
-    container: bitnami/dotnet-sdk:6
-    env:
-      NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
-      # from https://semver.org/
-      SEMVER_REGEX: >
-        ^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$
-      TEST_VERSION: v0.3.1
-    steps:
-      - uses: actions/checkout@v3
-      - run: echo ${TEST_VERSION} | perl -pe "s/^v(.*)$/\1/"
-      - run: echo ${TEST_VERSION} | perl -pe "s/^v(.*)$/\1/" | perl -pe "s/${SEMVER_REGEX}/\1.0.0.0/"
-      - run: echo ${TEST_VERSION} | perl -pe "s/^v(.*)$/\1/" | perl -pe "s/${SEMVER_REGEX}/\1.\2.\3.${GITHUB_RUN_ID}/"
