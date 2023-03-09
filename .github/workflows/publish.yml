@@ -1,0 +1,29 @@
+on:
+  push:
+    tags:
+      - v*
+
+jobs:
+
+  publish-npm:
+    runs-on: ubuntu-latest
+    container: bitnami/dotnet-sdk:6
+    env:
+      NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+      # from https://semver.org/
+      SEMVER_REGEX: >
+        ^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$
+    steps:
+      - uses: actions/checkout@v3
+      # see https://learn.microsoft.com/en-us/dotnet/standard/library-guidance/versioning 
+      - run: >
+          dotnet pack Goodrouter
+          --configuration Release
+          --property Version=${GITHUB_REF_NAME:1}
+          --property AssemblyVersion=$(echo ${GITHUB_REF_NAME:1} | perl -pe "s/$SEMVER_REGEX/\1.0.0.0/")
+          --property FileVersion=$(echo ${GITHUB_REF_NAME:1} | perl -pe "s/$SEMVER_REGEX/\1.\2.\3.${GITHUB_RUN_ID}/")
+      - run: >
+          dotnet nuget push
+          --api-key $NUGET_API_KEY
+          --source https://api.nuget.org/v3/index.json 'Goodrouter/bin/Release/*.nupkg'
+

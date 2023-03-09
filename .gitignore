@@ -3,7 +3,6 @@
 !.gitignore
 !.gitattributes
 !.editorconfig
-!.gitlab-ci.yml
 
 obj/
 bin/
@@ -11,3 +10,4 @@ TestResults/
 BenchmarkDotNet.Artifacts/
 
 !/.vscode/
+!/.github/
