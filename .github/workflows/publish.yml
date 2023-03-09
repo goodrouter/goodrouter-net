@@ -15,6 +15,8 @@ jobs:
         ^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$
     steps:
       - uses: actions/checkout@v3
+        with:
+          lfs: true
       # see https://learn.microsoft.com/en-us/dotnet/standard/library-guidance/versioning 
       - run: >
           dotnet pack Goodrouter
