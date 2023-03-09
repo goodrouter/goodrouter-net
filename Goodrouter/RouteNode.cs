@@ -4,7 +4,9 @@ internal class RouteNode : IComparable<RouteNode>, IEquatable<RouteNode>
 {
     public string Anchor { get; private set; }
     public string? Parameter { get; private set; }
-    public string? Name { get; private set; }
+    public string? RouteName { get; private set; }
+
+    public string[] RouteParameterNames { get; private set; }
 
     private SortedSet<RouteNode> children = new SortedSet<RouteNode>();
     public IReadOnlySet<RouteNode> Children
@@ -29,12 +31,21 @@ internal class RouteNode : IComparable<RouteNode>, IEquatable<RouteNode>
     public RouteNode(
         string anchor = "",
         string? parameter = null,
-        string? name = null
+        string? routeName = null
+    ) : this(anchor, parameter, routeName, new string[] { })
+    {
+    }
+    public RouteNode(
+        string anchor,
+        string? parameter,
+        string? routeName,
+        string[] routeParameterNames
     )
     {
         this.Anchor = anchor;
         this.Parameter = parameter;
-        this.Name = name;
+        this.RouteName = routeName;
+        this.RouteParameterNames = routeParameterNames;
     }
 
     public RouteNode Insert(
@@ -163,10 +174,10 @@ internal class RouteNode : IComparable<RouteNode>, IEquatable<RouteNode>
         }
 
         // if the node had a route name and there is no path left to match against then we found a route
-        if (this.Name != null && path.Length == 0)
+        if (this.RouteName != null && path.Length == 0)
         {
             return new Route(
-                this.Name,
+                this.RouteName,
                 parameters
             );
         }
@@ -201,7 +212,7 @@ internal class RouteNode : IComparable<RouteNode>, IEquatable<RouteNode>
         var childNode = new RouteNode(
             chainNode.Anchor,
             chainNode.Parameter,
-            chainNode.Name
+            chainNode.RouteName
         );
         this.AddChild(childNode);
         return childNode;
@@ -301,9 +312,9 @@ internal class RouteNode : IComparable<RouteNode>, IEquatable<RouteNode>
         if (this.Anchor == otherNode.Anchor)
         {
             if (
-                this.Name != null &&
-                otherNode.Name != null &&
-                this.Name != otherNode.Name
+                this.RouteName != null &&
+                otherNode.RouteName != null &&
+                this.RouteName != otherNode.RouteName
             )
             {
                 throw new ArgumentException("ambigous route");
@@ -398,7 +409,7 @@ internal class RouteNode : IComparable<RouteNode>, IEquatable<RouteNode>
         }
 
         {
-            var compared = (this.Name == null).CompareTo(other.Name == null);
+            var compared = (this.RouteName == null).CompareTo(other.RouteName == null);
             if (compared != 0)
             {
                 return 0 - compared;
@@ -430,7 +441,7 @@ internal class RouteNode : IComparable<RouteNode>, IEquatable<RouteNode>
 
         return this.Anchor == other.Anchor &&
             this.Parameter == other.Parameter &&
-            this.Name == other.Name;
+            this.RouteName == other.RouteName;
     }
 
 }
