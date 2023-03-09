@@ -1,5 +1,3 @@
-namespace Goodrouter;
-
 /// <summary>
 /// This is the router!
 /// </summary>
