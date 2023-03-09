@@ -1,4 +1,4 @@
-namespace Goodrouter;
+using System.Text.RegularExpressions;
 
 internal class RouteNode : IComparable<RouteNode>, IEquatable<RouteNode>
 {
@@ -54,62 +54,40 @@ internal class RouteNode : IComparable<RouteNode>, IEquatable<RouteNode>
     }
 
     public RouteNode Insert(
-        string name,
-        string template
+        string routeKey,
+        string routeTemplate,
+        Regex parameterPlaceholderRE
     )
     {
-        var chainNodes = NewChain(name, template);
-        chainNodes = chainNodes.Reverse();
+        var pairs =
+            TemplateUtility.ParseTemplatePairs(routeTemplate, parameterPlaceholderRE).ToArray();
+
+        var routeParameterNames = pairs.
+            Select(pair =>
+            {
+                var (anchor, parameterName) = pair;
+                return parameterName;
+            }).
+            Where(parameterName => parameterName != null).
+            ToArray();
 
         var currentNode = this;
-        foreach (var chainNode in chainNodes)
+        for (var index = 0; index < pairs.Length; index++)
         {
-            var (commonPrefixLength, similarNode) = currentNode.FindSimilar(chainNode);
-            if (similarNode == null)
-            {
-                currentNode = currentNode.InsertNew(
-                    chainNode
-                );
-            }
-            else
-            {
-                var strategy = similarNode.GetInsertStrategy(chainNode, commonPrefixLength);
-                switch (strategy)
-                {
-                    case RouteNodeInsertStrategy.Merge:
-                        currentNode = currentNode.InsertMerge(
-                            chainNode,
-                            similarNode
-                        );
-                        break;
+            var (anchor, parameterName) = pairs[index];
+            var hasParameter = parameterName != null;
 
-                    case RouteNodeInsertStrategy.AddToThis:
-                        currentNode = currentNode.InsertAddTo(
-                            chainNode,
-                            similarNode,
-                            commonPrefixLength
-                        );
-                        break;
+            var (commonPrefixLength, childNode) =
+                currentNode.FindSimilarChild(anchor, hasParameter);
 
-                    case RouteNodeInsertStrategy.AddToOther:
-                        currentNode = currentNode.InsertAddTo(
-                            similarNode,
-                            chainNode,
-                            commonPrefixLength
-                        );
-                        break;
-
-                    case RouteNodeInsertStrategy.Intermediate:
-                        currentNode = currentNode.InsertIntermediate(
-                            chainNode,
-                            similarNode,
-                            commonPrefixLength
-                        );
-                        break;
-
-                }
-
-            }
+            currentNode = currentNode.Merge(
+                childNode,
+                anchor,
+                hasParameter,
+                index == pairs.Length - 1 ? routeKey : null,
+                routeParameterNames,
+                commonPrefixLength
+            );
 
         }
 
@@ -422,177 +400,6 @@ internal class RouteNode : IComparable<RouteNode>, IEquatable<RouteNode>
         }
 
         return (0, null);
-    }
-
-    private RouteNode InsertNew(
-        RouteNode chainNode
-    )
-    {
-        var childNode = new RouteNode(
-            chainNode.Anchor,
-            chainNode.HasParameter,
-            chainNode.RouteKey
-        );
-        this.AddChild(childNode);
-        return childNode;
-    }
-
-    private RouteNode InsertMerge(
-        RouteNode appendNode,
-        RouteNode receivingNode
-    )
-    {
-        foreach (var childNode in appendNode.children)
-        {
-            appendNode.RemoveChild(childNode);
-            receivingNode.AddChild(childNode);
-        }
-        return receivingNode;
-    }
-
-    private RouteNode InsertAddTo(
-        RouteNode addNode,
-        RouteNode receivingNode,
-        int commonPrefixLength
-    )
-    {
-        addNode.Anchor = addNode.Anchor.Substring(commonPrefixLength);
-        addNode.HasParameter = null;
-
-        var childNode = receivingNode.Children.FirstOrDefault(
-            childNode => childNode.Equals(addNode)
-        );
-        if (childNode == null)
-        {
-            if (addNode.Parent != null)
-            {
-                addNode.Parent.RemoveChild(addNode);
-            }
-            receivingNode.AddChild(addNode);
-            return addNode;
-        }
-        else
-        {
-            return childNode;
-        }
-        throw new NotImplementedException();
-    }
-
-    private RouteNode InsertIntermediate(
-        RouteNode newNode,
-        RouteNode childNode,
-        int commonPrefixLength
-    )
-    {
-        var intermediateNode = new RouteNode(
-            childNode.Anchor.Substring(0, commonPrefixLength),
-            childNode.HasParameter
-        );
-        this.AddChild(intermediateNode);
-        this.RemoveChild(childNode);
-        intermediateNode.AddChild(childNode);
-        intermediateNode.AddChild(newNode);
-
-        childNode.Anchor = childNode.Anchor.Substring(commonPrefixLength);
-        newNode.Anchor = newNode.Anchor.Substring(commonPrefixLength);
-
-        childNode.HasParameter = null;
-        newNode.HasParameter = null;
-
-        return newNode;
-    }
-
-    private (int, RouteNode?) FindSimilar(
-        RouteNode otherNode
-    )
-    {
-        if (this.HasParameter != null) return (0, null);
-
-        foreach (var childNode in this.Children)
-        {
-            if (childNode.HasParameter != null) continue;
-
-            var commonPrefixLength = StringUtility.FindCommonPrefixLength(otherNode.Anchor, childNode.Anchor);
-            if (commonPrefixLength == 0) continue;
-
-            return (commonPrefixLength, childNode);
-        }
-
-        return (0, null);
-    }
-
-    private RouteNodeInsertStrategy GetInsertStrategy(
-        RouteNode otherNode,
-        int commonPrefixLength
-    )
-    {
-        var commonPrefix = this.Anchor.Substring(0, commonPrefixLength);
-
-        if (this.Anchor == otherNode.Anchor)
-        {
-            if (
-                this.RouteKey != null &&
-                otherNode.RouteKey != null &&
-                this.RouteKey != otherNode.RouteKey
-            )
-            {
-                throw new ArgumentException("ambigous route");
-            }
-            else if (
-                this.HasParameter != null &&
-                otherNode.HasParameter != null &&
-                this.HasParameter != otherNode.HasParameter
-            )
-            {
-                return RouteNodeInsertStrategy.Intermediate;
-            }
-            else
-            {
-                return RouteNodeInsertStrategy.Merge;
-            }
-        }
-        else if (this.Anchor == commonPrefix)
-        {
-            return RouteNodeInsertStrategy.AddToThis;
-        }
-        else if (otherNode.Anchor == commonPrefix)
-        {
-            return RouteNodeInsertStrategy.AddToOther;
-        }
-        else
-        {
-            return RouteNodeInsertStrategy.Intermediate;
-        }
-    }
-
-    private static IEnumerable<RouteNode> NewChain(
-        string name,
-        string template
-    )
-    {
-        var parts = StringUtility.ParsePlaceholders(template).Reverse().ToArray();
-        string? currentName = name;
-
-        for (var index = 0; index < parts.Length; index += 2)
-        {
-            var anchor = parts[index];
-            var parameter = (index + 1) < parts.Length ?
-                parts[index + 1] :
-                null;
-
-            if (anchor == null)
-            {
-                throw new ArgumentException();
-            }
-
-            yield return new RouteNode(
-                anchor,
-                parameter,
-                currentName
-            );
-
-            currentName = null;
-        }
     }
 
     private void AddChild(RouteNode node)
