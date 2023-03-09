@@ -119,7 +119,63 @@ internal class RouteNode : IComparable<RouteNode>, IEquatable<RouteNode>
     {
         var parameterValues = new string[] { };
 
-        throw new NotImplementedException();
+        if (this.HasParameter)
+        {
+            if (path.Length == 0)
+            {
+                return (null, new string[] { }, new string[] { });
+            }
+
+            var index = this.Anchor.Length == 0 ?
+            path.Length :
+            path.Substring(0, Math.Min(
+                maximumParameterValueLength + this.Anchor.Length,
+                path.Length
+            )).
+                IndexOf(this.Anchor);
+
+            if (index < 0)
+            {
+                return (null, new string[] { }, new string[] { });
+            }
+        }
+        else
+        {
+            if (!path.StartsWith(this.Anchor))
+            {
+                return (null, new string[] { }, new string[] { });
+            }
+
+            path = path.Substring(this.Anchor.Length);
+        }
+
+        foreach (var childNode in this.children)
+        {
+            var (childRouteKey, childRouteParameterNames, childParameterValues) = childNode.Parse(
+                path,
+                maximumParameterValueLength
+            );
+
+            if (childRouteKey != null)
+            {
+                return (
+                    childRouteKey,
+                    childRouteParameterNames,
+                    parameterValues.Concat(childParameterValues).ToArray()
+                );
+            }
+        }
+
+        if (this.RouteKey != null && path.Length == 0)
+        {
+            return (
+                this.RouteKey,
+                this.RouteParameterNames,
+                parameterValues
+                );
+        }
+
+        return (null, new string[] { }, new string[] { });
     }
 
     public string Stringify(
