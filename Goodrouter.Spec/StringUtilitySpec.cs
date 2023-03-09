@@ -1,5 +1,3 @@
-namespace Goodrouter.Spec;
-
 using Xunit;
 
 public class StringUtilitySpec
