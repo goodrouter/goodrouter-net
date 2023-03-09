@@ -194,6 +194,126 @@ internal class RouteNode : IComparable<RouteNode>, IEquatable<RouteNode>
         return path;
     }
 
+
+    private RouteNode Merge(
+        RouteNode? childNode,
+        string anchor,
+        bool hasParameter,
+        string? routeKey,
+        string[] routeParameterNames,
+        int commmonPrefixLength
+    )
+    {
+        if (childNode == null)
+        {
+            return this.MergeNew(
+                anchor,
+                hasParameter,
+                routeKey,
+                routeParameterNames
+            );
+        }
+
+        var commonPrefix = childNode.Anchor.Substring(0, commmonPrefixLength);
+
+        if (childNode.Anchor == anchor)
+        {
+            return this.MergeJoin(
+                childNode,
+                routeKey,
+                routeParameterNames
+            );
+        }
+        else if (childNode.Anchor == commonPrefix)
+        {
+            return this.MergeAddToChild(
+                childNode,
+                anchor,
+                hasParameter,
+                routeKey,
+                routeParameterNames,
+                commmonPrefixLength
+            );
+        }
+        else if (anchor == commonPrefix)
+        {
+            return this.MergeAddToNew(
+                childNode,
+                anchor,
+                hasParameter,
+                routeKey,
+                routeParameterNames,
+                commmonPrefixLength
+            );
+        }
+        else
+        {
+            return this.MergeIntermediate(
+                childNode,
+                anchor,
+                hasParameter,
+                routeKey,
+                routeParameterNames,
+                commmonPrefixLength
+            );
+        }
+    }
+
+    private RouteNode MergeNew(
+        string anchor,
+        bool hasParameter,
+        string? routeKey,
+        string[] routeParameterNames
+    )
+    {
+        throw new NotImplementedException();
+    }
+
+    private RouteNode MergeJoin(
+        RouteNode? childNode,
+        string? routeKey,
+        string[] routeParameterNames
+    )
+    {
+        throw new NotImplementedException();
+    }
+
+    private RouteNode MergeIntermediate(
+        RouteNode? childNode,
+        string anchor,
+        bool hasParameter,
+        string? routeKey,
+        string[] routeParameterNames,
+        int commmonPrefixLength
+    )
+    {
+        throw new NotImplementedException();
+    }
+
+    private RouteNode MergeAddToChild(
+        RouteNode? childNode,
+        string anchor,
+        bool hasParameter,
+        string? routeKey,
+        string[] routeParameterNames,
+        int commmonPrefixLength
+    )
+    {
+        throw new NotImplementedException();
+    }
+
+    private RouteNode MergeAddToNew(
+        RouteNode? childNode,
+        string anchor,
+        bool hasParameter,
+        string? routeKey,
+        string[] routeParameterNames,
+        int commmonPrefixLength
+    )
+    {
+        throw new NotImplementedException();
+    }
+
     private RouteNode InsertNew(
         RouteNode chainNode
     )
