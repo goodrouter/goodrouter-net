@@ -5,7 +5,7 @@ on:
 
 jobs:
 
-  publish-npm:
+  publish-nuget:
     runs-on: ubuntu-latest
     container: bitnami/dotnet-sdk:6
     env:
