@@ -3,7 +3,10 @@ using Xunit;
 
 enum Route
 {
-    A, B, C, D
+    A,
+    B,
+    C,
+    D
 }
 
 public class RouterSpec
