@@ -458,8 +458,8 @@ internal class RouteNode<K> : IComparable<RouteNode<K>>, IEquatable<RouteNode<K>
         if (other == null) return false;
 
         return this.Anchor == other.Anchor &&
-            this.HasParameter == other.HasParameter;
-        // this.RouteKey == other.RouteKey;
+            this.HasParameter == other.HasParameter &&
+            Object.Equals(this.RouteKey, other.RouteKey);
     }
 
 }
