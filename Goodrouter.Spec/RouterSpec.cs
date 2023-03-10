@@ -1,6 +1,11 @@
 using System.Text.RegularExpressions;
 using Xunit;
 
+enum Route
+{
+    A, B, C, D
+}
+
 public class RouterSpec
 {
     private Regex parameterPlaceholderRE = new Regex("\\{(.*?)\\}");
@@ -8,34 +13,34 @@ public class RouterSpec
     [Fact]
     public void RouterTest()
     {
-        var router = new Router<string>();
+        var router = new Router<Route>();
 
-        router.InsertRoute("a", "/a");
-        router.InsertRoute("b", "/b/{x}");
-        router.InsertRoute("c", "/b/{x}/c");
-        router.InsertRoute("d", "/b/{x}/d");
+        router.InsertRoute(Route.A, "/a");
+        router.InsertRoute(Route.B, "/b/{x}");
+        router.InsertRoute(Route.C, "/b/{x}/c");
+        router.InsertRoute(Route.D, "/b/{x}/d");
 
         {
             var (routeKey, routeParameters) = router.ParseRoute("/a");
-            Assert.Equal("a", routeKey);
+            Assert.Equal(Route.A, routeKey);
             Assert.Equal(new Dictionary<string, string>() { }, routeParameters);
         }
 
         {
             var (routeKey, routeParameters) = router.ParseRoute("/b/x");
-            Assert.Equal("b", routeKey);
+            Assert.Equal(Route.B, routeKey);
             Assert.Equal(new Dictionary<string, string>() { { "x", "x" } }, routeParameters);
         }
 
         {
             var (routeKey, routeParameters) = router.ParseRoute("/b/y/c");
-            Assert.Equal("c", routeKey);
+            Assert.Equal(Route.C, routeKey);
             Assert.Equal(new Dictionary<string, string>() { { "x", "y" } }, routeParameters);
         }
 
         {
             var (routeKey, routeParameters) = router.ParseRoute("/b/z/d");
-            Assert.Equal("d", routeKey);
+            Assert.Equal(Route.D, routeKey);
             Assert.Equal(new Dictionary<string, string>() { { "x", "z" } }, routeParameters);
         }
 
