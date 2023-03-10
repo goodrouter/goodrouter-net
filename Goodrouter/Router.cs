@@ -9,7 +9,73 @@ public class Router<K> where K : class
     private readonly Dictionary<K, RouteNode<K>> leafNodes = new Dictionary<K, RouteNode<K>>();
 
     private Regex parameterPlaceholderRE = new Regex("\\{(.*?)\\}");
-    private int MaximumParameterValueLength = 20;
+    private int maximumParameterValueLength = 20;
+
+    private Func<string, string> parameterValueEncoder =
+        (string decodedValue) => Uri.EscapeDataString(decodedValue);
+
+    private Func<string, string> parameterValueDecoder =
+        (string encodedValue) => Uri.UnescapeDataString(encodedValue);
+
+    /// <summary>
+    /// Set the maximum length of an encoded parameter value
+    /// </summary>
+    /// <param name="value">
+    /// The maximum length
+    /// </param>
+    /// <returns>
+    /// Router object, so you can chain!
+    /// </returns>
+    public Router<K> SetMaximumParameterValueLength(int value)
+    {
+        maximumParameterValueLength = value;
+        return this;
+    }
+
+    /// <summary>
+    /// Set the regular expression that will be used to parse placeholders from a route template
+    /// </summary>
+    /// <param name="value">
+    /// The regular expression
+    /// </param>
+    /// <returns>
+    /// Router object, so you can chain!
+    /// </returns>
+    public Router<K> SetParameterPlaceholderRE(Regex value)
+    {
+        parameterPlaceholderRE = value;
+        return this;
+    }
+
+    /// <summary>
+    /// Sets the function that will be used to encode parameter values
+    /// </summary>
+    /// <param name="value">
+    /// Function to use
+    /// </param>
+    /// <returns>
+    /// Router object, so you can chain!
+    /// </returns>
+    public Router<K> SetParameterValueEncoder(Func<string, string> value)
+    {
+        parameterValueEncoder = value;
+        return this;
+    }
+
+    /// <summary>
+    /// Sets the function that will be used when decoding parameter values
+    /// </summary>
+    /// <param name="value">
+    /// Function to use
+    /// </param>
+    /// <returns>
+    /// Router object, so you can chain!
+    /// </returns>
+    public Router<K> SetParameterValueDecoder(Func<string, string> value)
+    {
+        parameterValueDecoder = value;
+        return this;
+    }
 
     /// <summary>
     /// Adds a new route
@@ -51,14 +117,14 @@ public class Router<K> where K : class
 
         var (routeKey, parameterNames, parameterValues) = this.rootNode.Parse(
             path,
-            this.MaximumParameterValueLength
+            this.maximumParameterValueLength
         );
 
         for (var index = 0; index < parameterNames.Count; index++)
         {
             var parameterName = parameterNames[index];
             var parameterValue = parameterValues[index];
-            parameters[parameterName] = parameterValue;
+            parameters[parameterName] = parameterValueDecoder(parameterValue);
         }
 
         return (
@@ -106,7 +172,7 @@ public class Router<K> where K : class
         foreach (var parameterName in node.RouteParameterNames)
         {
             var parameterValue = routeParameters[parameterName];
-            parameterValues.Add(parameterValue);
+            parameterValues.Add(parameterValueEncoder(parameterValue));
         }
 
         return node.Stringify(parameterValues);
