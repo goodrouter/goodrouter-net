@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 public class Router<K>
 {
     private RouteNode<K> rootNode = new RouteNode<K>();
-    private readonly Dictionary<string, RouteNode<K>> leafNodes = new Dictionary<string, RouteNode<K>>();
+    private readonly Dictionary<K, RouteNode<K>> leafNodes = new Dictionary<K, RouteNode<K>>();
 
     private Regex parameterPlaceholderRE = new Regex("\\{(.*?)\\}");
     private int MaximumParameterValueLength = 20;
@@ -21,7 +21,7 @@ public class Router<K>
     /// template for the route, als defines parameters
     /// </param>
     public Router<K> InsertRoute(
-        string routeKey,
+        K routeKey,
         string routeTemplate
     )
     {
@@ -43,7 +43,7 @@ public class Router<K>
     /// <returns>
     /// route that is matches to the path or null if no match is found
     /// </returns>
-    public (string?, IReadOnlyDictionary<string, string>) ParseRoute(
+    public (K?, IReadOnlyDictionary<string, string>) ParseRoute(
         string path
     )
     {
@@ -77,7 +77,7 @@ public class Router<K>
     /// string representing the route or null if the route is not found by name
     /// </returns>
     public string? StringifyRoute(
-        string routeKey
+        K routeKey
     )
     {
         return StringifyRoute(routeKey, new Dictionary<string, string>());
@@ -95,7 +95,7 @@ public class Router<K>
     /// string representing the route or null if the route is not found by name
     /// </returns>
     public string? StringifyRoute(
-        string routeKey,
+        K routeKey,
         IReadOnlyDictionary<string, string> routeParameters
     )
     {

@@ -4,7 +4,7 @@ internal class RouteNode<K> : IComparable<RouteNode<K>>, IEquatable<RouteNode<K>
 {
     public string Anchor { get; private set; }
     public bool HasParameter { get; private set; }
-    public string? RouteKey { get; private set; }
+    public K? RouteKey { get; private set; }
 
     public IList<string> RouteParameterNames { get; private set; }
 
@@ -49,7 +49,7 @@ internal class RouteNode<K> : IComparable<RouteNode<K>>, IEquatable<RouteNode<K>
     public RouteNode(
         string anchor = "",
         bool hasParameter = false,
-        string? routeKey = null
+        K? routeKey = null
     ) : this(
         anchor,
         hasParameter,
@@ -61,7 +61,7 @@ internal class RouteNode<K> : IComparable<RouteNode<K>>, IEquatable<RouteNode<K>
     public RouteNode(
         string anchor,
         bool hasParameter,
-        string? routeKey,
+        K? routeKey,
         IList<string> routeParameterNames
     )
     {
@@ -72,7 +72,7 @@ internal class RouteNode<K> : IComparable<RouteNode<K>>, IEquatable<RouteNode<K>
     }
 
     public RouteNode<K> Insert(
-        string routeKey,
+        K routeKey,
         string routeTemplate,
         Regex parameterPlaceholderRE
     )
@@ -112,7 +112,7 @@ internal class RouteNode<K> : IComparable<RouteNode<K>>, IEquatable<RouteNode<K>
         return currentNode;
     }
 
-    public (string?, IList<string>, IList<string>) Parse(
+    public (K?, IList<string>, IList<string>) Parse(
         string path,
         int maximumParameterValueLength
     )
@@ -210,7 +210,7 @@ internal class RouteNode<K> : IComparable<RouteNode<K>>, IEquatable<RouteNode<K>
         RouteNode<K>? childNode,
         string anchor,
         bool hasParameter,
-        string? routeKey,
+        K? routeKey,
         IList<string> routeParameterNames,
         int commmonPrefixLength
     )
@@ -273,7 +273,7 @@ internal class RouteNode<K> : IComparable<RouteNode<K>>, IEquatable<RouteNode<K>
     private RouteNode<K> MergeNew(
         string anchor,
         bool hasParameter,
-        string? routeKey,
+        K? routeKey,
         IList<string> routeParameterNames
     )
     {
@@ -289,7 +289,7 @@ internal class RouteNode<K> : IComparable<RouteNode<K>>, IEquatable<RouteNode<K>
 
     private RouteNode<K> MergeJoin(
         RouteNode<K> childNode,
-        string? routeKey,
+        K? routeKey,
         IList<string> routeParameterNames
     )
     {
@@ -314,7 +314,7 @@ internal class RouteNode<K> : IComparable<RouteNode<K>>, IEquatable<RouteNode<K>
         RouteNode<K> childNode,
         string anchor,
         bool hasParameter,
-        string? routeKey,
+        K? routeKey,
         IList<string> routeParameterNames,
         int commmonPrefixLength
     )
@@ -347,7 +347,7 @@ internal class RouteNode<K> : IComparable<RouteNode<K>>, IEquatable<RouteNode<K>
         RouteNode<K> childNode,
         string anchor,
         bool hasParameter,
-        string? routeKey,
+        K? routeKey,
         IList<string> routeParameterNames,
         int commmonPrefixLength
     )
@@ -372,7 +372,7 @@ internal class RouteNode<K> : IComparable<RouteNode<K>>, IEquatable<RouteNode<K>
         RouteNode<K> childNode,
         string anchor,
         bool hasParameter,
-        string? routeKey,
+        K? routeKey,
         IList<string> routeParameterNames,
         int commmonPrefixLength
     )
