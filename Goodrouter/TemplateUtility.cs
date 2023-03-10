@@ -13,9 +13,9 @@ internal static class TemplateUtility
         {
             yield return routeTemplate.Substring(
                 offsetIndex,
-                match.Index
+                match.Index - offsetIndex
             );
-            yield return match.Captures[0].Value;
+            yield return match.Groups[1].Value;
             offsetIndex = match.Index + match.Length;
         }
         yield return routeTemplate.Substring(offsetIndex);
