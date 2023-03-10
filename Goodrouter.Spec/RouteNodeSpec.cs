@@ -1,5 +1,3 @@
-namespace Goodrouter.Spec;
-
 using Xunit;
 
 public class RouteNodeSpec
@@ -8,15 +6,14 @@ public class RouteNodeSpec
     [Fact]
     public void RouteNodeSortTest()
     {
-        var routeNodes = new RouteNode[]{
-            new RouteNode("aa", "p"),
-            new RouteNode("aa"),
-            new RouteNode("xx"),
-            new RouteNode("aa", null, "n"),
-            new RouteNode("x")
+        var routeNodes = new RouteNode<string>[]{
+            new RouteNode<string>("aa"),
+            new RouteNode<string>("xx"),
+            new RouteNode<string>("aa", true),
+            new RouteNode<string>("x")
         };
 
-        var sortedRouteNodes = new SortedSet<RouteNode>(routeNodes).ToArray();
+        var sortedRouteNodes = new SortedSet<RouteNode<string>>(routeNodes).ToArray();
 
         Assert.Equal(routeNodes, sortedRouteNodes);
     }
