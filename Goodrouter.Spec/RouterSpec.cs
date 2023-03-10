@@ -1,7 +1,9 @@
+using System.Text.RegularExpressions;
 using Xunit;
 
 public class RouterSpec
 {
+    private Regex parameterPlaceholderRE = new Regex("\\{(.*?)\\}");
 
     [Fact]
     public void RouterTest()
@@ -98,4 +100,71 @@ public class RouterSpec
 
     }
 
+    [Fact]
+    public void RouterTestSmall()
+    {
+        RouterTestTemplates("small");
+    }
+
+    [Fact]
+    public void RouterTestDocker()
+    {
+        RouterTestTemplates("docker");
+    }
+
+    [Fact]
+    public void RouterTestGithub()
+    {
+        RouterTestTemplates("github");
+    }
+
+    private void RouterTestTemplates(string name)
+    {
+        var templates = System.IO.File.ReadLines("../../../../fixtures/" + name + ".txt").
+            Where(line => line.Length > 0).
+            ToArray();
+
+        var allParameterNames = templates.
+            SelectMany(
+                template => TemplateUtility.ParseTemplateParts(template, parameterPlaceholderRE).
+                    Where((part, index) => index % 2 != 0)
+            ).
+            ToHashSet();
+
+        var allParameters = allParameterNames.
+            Select((name, index) => (name, "p" + index)).
+            ToDictionary(pair => pair.name, pair => pair.Item2);
+
+        var templateCount = templates.Length;
+
+        var router = new Router();
+        foreach (var template in templates)
+        {
+            router.InsertRoute(template, template);
+        }
+
+        var paths = templates.
+            Select(template =>
+                {
+                    var path = router.StringifyRoute(template, allParameters);
+                    return path;
+                }
+            ).
+            ToArray() as string[];
+
+        for (var index = 0; index < templateCount; index++)
+        {
+            var path = paths[index];
+            var template = templates[index];
+
+            var (routeKey, routeParameters) = router.ParseRoute(path);
+
+            var expectedParameters = routeParameters.Keys.
+                Select(name => (name, allParameters[name])).
+                ToDictionary(pair => pair.name, pair => pair.Item2);
+
+            Assert.Equal(template, routeKey);
+            Assert.Equal(expectedParameters, routeParameters);
+        }
+    }
 }
