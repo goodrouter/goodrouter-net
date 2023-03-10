@@ -1,5 +1,3 @@
-namespace Goodrouter.Bench;
-
 using BenchmarkDotNet.Running;
 
 public class Program
