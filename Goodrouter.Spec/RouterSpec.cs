@@ -120,7 +120,7 @@ public class RouterSpec
 
     private void RouterTestTemplates(string name)
     {
-        var templates = System.IO.File.ReadLines("../../../../fixtures/" + name + ".txt").
+        var templates = System.IO.File.ReadLines("" + name + ".txt").
             Where(line => line.Length > 0).
             ToArray();
 
