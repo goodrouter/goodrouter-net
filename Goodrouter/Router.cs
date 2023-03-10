@@ -3,10 +3,10 @@ using System.Text.RegularExpressions;
 /// <summary>
 /// This is the router!
 /// </summary>
-public class Router
+public class Router<K>
 {
-    private RouteNode rootNode = new RouteNode();
-    private readonly Dictionary<string, RouteNode> leafNodes = new Dictionary<string, RouteNode>();
+    private RouteNode<K> rootNode = new RouteNode<K>();
+    private readonly Dictionary<string, RouteNode<K>> leafNodes = new Dictionary<string, RouteNode<K>>();
 
     private Regex parameterPlaceholderRE = new Regex("\\{(.*?)\\}");
     private int MaximumParameterValueLength = 20;
@@ -20,7 +20,7 @@ public class Router
     /// <param name="routeTemplate">
     /// template for the route, als defines parameters
     /// </param>
-    public Router InsertRoute(
+    public Router<K> InsertRoute(
         string routeKey,
         string routeTemplate
     )
