@@ -3,6 +3,7 @@ using Xunit;
 
 enum Route
 {
+    NotFound,
     A,
     B,
     C,
@@ -22,6 +23,12 @@ public class RouterSpec
         router.InsertRoute(Route.B, "/b/{x}");
         router.InsertRoute(Route.C, "/b/{x}/c");
         router.InsertRoute(Route.D, "/b/{x}/d");
+
+        {
+            var (routeKey, routeParameters) = router.ParseRoute("/not-found");
+            Assert.Equal(Route.NotFound, routeKey);
+            Assert.Equal(new Dictionary<string, string>() { }, routeParameters);
+        }
 
         {
             var (routeKey, routeParameters) = router.ParseRoute("/a");

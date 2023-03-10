@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-internal class RouteNode<K> : IComparable<RouteNode<K>>, IEquatable<RouteNode<K>> where K : class
+internal class RouteNode<K> : IComparable<RouteNode<K>>, IEquatable<RouteNode<K>> where K : notnull
 {
     public string Anchor { get; private set; }
     public bool HasParameter { get; private set; }
@@ -49,7 +49,7 @@ internal class RouteNode<K> : IComparable<RouteNode<K>>, IEquatable<RouteNode<K>
     public RouteNode(
         string anchor = "",
         bool hasParameter = false,
-        K? routeKey = null
+        K? routeKey = default(K?)
     ) : this(
         anchor,
         hasParameter,
@@ -102,7 +102,7 @@ internal class RouteNode<K> : IComparable<RouteNode<K>>, IEquatable<RouteNode<K>
                 childNode,
                 anchor,
                 hasParameter,
-                index == pairs.Length - 1 ? routeKey : null,
+                index == pairs.Length - 1 ? routeKey : default(K?),
                 routeParameterNames,
                 commonPrefixLength
             );
@@ -123,7 +123,7 @@ internal class RouteNode<K> : IComparable<RouteNode<K>>, IEquatable<RouteNode<K>
         {
             if (path.Length == 0)
             {
-                return (null, new string[] { }, new string[] { });
+                return (default(K?), new string[] { }, new string[] { });
             }
 
             var index = this.Anchor.Length == 0 ?
@@ -136,7 +136,7 @@ internal class RouteNode<K> : IComparable<RouteNode<K>>, IEquatable<RouteNode<K>
 
             if (index < 0)
             {
-                return (null, new string[] { }, new string[] { });
+                return (default(K?), new string[] { }, new string[] { });
             }
 
             var value = path.Substring(0, index);
@@ -149,7 +149,7 @@ internal class RouteNode<K> : IComparable<RouteNode<K>>, IEquatable<RouteNode<K>
         {
             if (!path.StartsWith(this.Anchor))
             {
-                return (null, new string[] { }, new string[] { });
+                return (default(K?), new string[] { }, new string[] { });
             }
 
             path = path.Substring(this.Anchor.Length);
@@ -162,7 +162,7 @@ internal class RouteNode<K> : IComparable<RouteNode<K>>, IEquatable<RouteNode<K>
                 maximumParameterValueLength
             );
 
-            if (childRouteKey != null)
+            if (!Object.Equals(childRouteKey, default(K?)))
             {
                 return (
                     childRouteKey,
@@ -172,7 +172,7 @@ internal class RouteNode<K> : IComparable<RouteNode<K>>, IEquatable<RouteNode<K>
             }
         }
 
-        if (this.RouteKey != null && path.Length == 0)
+        if (!Object.Equals(this.RouteKey, default(K?)) && path.Length == 0)
         {
             return (
                 this.RouteKey,
@@ -181,7 +181,7 @@ internal class RouteNode<K> : IComparable<RouteNode<K>>, IEquatable<RouteNode<K>
             );
         }
 
-        return (null, new string[] { }, new string[] { });
+        return (default(K?), new string[] { }, new string[] { });
     }
 
     public string Stringify(
@@ -294,14 +294,14 @@ internal class RouteNode<K> : IComparable<RouteNode<K>>, IEquatable<RouteNode<K>
     )
     {
         if (
-            childNode.RouteKey != null &&
-            routeKey != null
+            !Object.Equals(childNode.RouteKey, default(K?)) &&
+            !Object.Equals(routeKey, default(K?))
         )
         {
             throw new Exception("ambiguous route");
         }
 
-        if (childNode.RouteKey == null)
+        if (Object.Equals(childNode.RouteKey, default(K?)))
         {
             childNode.RouteKey = routeKey;
             childNode.RouteParameterNames = routeParameterNames;
@@ -458,8 +458,8 @@ internal class RouteNode<K> : IComparable<RouteNode<K>>, IEquatable<RouteNode<K>
         if (other == null) return false;
 
         return this.Anchor == other.Anchor &&
-            this.HasParameter == other.HasParameter &&
-            this.RouteKey == other.RouteKey;
+            this.HasParameter == other.HasParameter;
+        // this.RouteKey == other.RouteKey;
     }
 
 }
