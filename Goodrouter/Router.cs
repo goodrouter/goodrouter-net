@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 /// <summary>
 /// This is the router!
 /// </summary>
-public class Router<K>
+public class Router<K> where K : class
 {
     private RouteNode<K> rootNode = new RouteNode<K>();
     private readonly Dictionary<K, RouteNode<K>> leafNodes = new Dictionary<K, RouteNode<K>>();

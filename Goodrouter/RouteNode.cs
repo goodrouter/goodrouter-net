@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-internal class RouteNode<K> : IComparable<RouteNode<K>>, IEquatable<RouteNode<K>>
+internal class RouteNode<K> : IComparable<RouteNode<K>>, IEquatable<RouteNode<K>> where K : class
 {
     public string Anchor { get; private set; }
     public bool HasParameter { get; private set; }
