@@ -4,7 +4,7 @@ using BenchmarkDotNet.Attributes;
 
 public class RouterBench
 {
-    private Router router = new Router();
+    private Router<string> router = new Router<string>();
 
     public RouterBench()
     {

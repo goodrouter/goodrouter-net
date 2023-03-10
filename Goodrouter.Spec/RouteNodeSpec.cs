@@ -6,14 +6,14 @@ public class RouteNodeSpec
     [Fact]
     public void RouteNodeSortTest()
     {
-        var routeNodes = new RouteNode[]{
-            new RouteNode("aa"),
-            new RouteNode("xx"),
-            new RouteNode("aa", true),
-            new RouteNode("x")
+        var routeNodes = new RouteNode<string>[]{
+            new RouteNode<string>("aa"),
+            new RouteNode<string>("xx"),
+            new RouteNode<string>("aa", true),
+            new RouteNode<string>("x")
         };
 
-        var sortedRouteNodes = new SortedSet<RouteNode>(routeNodes).ToArray();
+        var sortedRouteNodes = new SortedSet<RouteNode<string>>(routeNodes).ToArray();
 
         Assert.Equal(routeNodes, sortedRouteNodes);
     }

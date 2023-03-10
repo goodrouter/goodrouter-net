@@ -8,7 +8,7 @@ public class RouterSpec
     [Fact]
     public void RouterTest()
     {
-        var router = new Router();
+        var router = new Router<string>();
 
         router.InsertRoute("a", "/a");
         router.InsertRoute("b", "/b/{x}");
@@ -44,7 +44,7 @@ public class RouterSpec
     [Fact]
     public void RouterTestReadme()
     {
-        var router = new Router();
+        var router = new Router<string>();
 
         router
             .InsertRoute("all-products", "/product/all")
@@ -137,7 +137,7 @@ public class RouterSpec
 
         var templateCount = templates.Length;
 
-        var router = new Router();
+        var router = new Router<string>();
         foreach (var template in templates)
         {
             router.InsertRoute(template, template);
