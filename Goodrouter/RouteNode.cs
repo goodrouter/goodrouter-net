@@ -87,7 +87,7 @@ internal class RouteNode : IComparable<RouteNode>, IEquatable<RouteNode>
                 return parameterName;
             }).
             Where(parameterName => parameterName != null).
-            ToArray();
+            ToArray() as string[];
 
         var currentNode = this;
         for (var index = 0; index < pairs.Length; index++)
