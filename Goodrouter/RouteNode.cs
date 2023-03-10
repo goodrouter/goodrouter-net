@@ -117,7 +117,7 @@ internal class RouteNode : IComparable<RouteNode>, IEquatable<RouteNode>
         int maximumParameterValueLength
     )
     {
-        var parameterValues = new string[] { };
+        var parameterValues = new List<string>();
 
         if (this.HasParameter)
         {
@@ -138,6 +138,12 @@ internal class RouteNode : IComparable<RouteNode>, IEquatable<RouteNode>
             {
                 return (null, new string[] { }, new string[] { });
             }
+
+            var value = path.Substring(0, index);
+
+            path = path.Substring(0, index);
+
+            parameterValues.Add(value);
         }
         else
         {
@@ -171,8 +177,8 @@ internal class RouteNode : IComparable<RouteNode>, IEquatable<RouteNode>
             return (
                 this.RouteKey,
                 this.RouteParameterNames,
-                parameterValues
-                );
+                parameterValues.ToArray()
+            );
         }
 
         return (null, new string[] { }, new string[] { });
