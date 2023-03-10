@@ -177,7 +177,7 @@ internal class RouteNode : IComparable<RouteNode>, IEquatable<RouteNode>
             return (
                 this.RouteKey,
                 this.RouteParameterNames,
-                parameterValues.ToArray()
+                parameterValues
             );
         }
 
