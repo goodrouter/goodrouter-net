@@ -39,63 +39,63 @@ public class RouterSpec
 
     }
 
-    // [Fact]
-    // public void RouterTestReadme()
-    // {
-    //     var router = new Router();
+    [Fact]
+    public void RouterTestReadme()
+    {
+        var router = new Router();
 
-    //     router.InsertRoute("all-products", "/product/all");
-    //     router.InsertRoute("product-detail", "/product/{id}");
+        router
+            .InsertRoute("all-products", "/product/all")
+            .InsertRoute("product-detail", "/product/{id}");
 
-    //     // And now we can parse routes!
+        // And now we can parse routes!
 
-    //     {
-    //         var route = router.ParseRoute("/not-found");
-    //         Assert.Null(route);
-    //     }
+        {
+            var (routeKey, routeParameters) = router.ParseRoute("/not-found");
+            Assert.Null(routeKey);
+            Assert.Equal(
+                new Dictionary<string, string>(),
+                routeParameters
+            );
+        }
 
-    //     {
-    //         var route = router.ParseRoute("/product/all");
-    //         Assert.Equal(
-    //             new Route(
-    //                 "all-products"
-    //             ),
-    //             route
-    //         );
-    //     }
+        {
+            var (routeKey, routeParameters) = router.ParseRoute("/product/all");
+            Assert.Equal("all-products", routeKey);
+            Assert.Equal(
+                new Dictionary<string, string>(),
+                routeParameters
+            );
+        }
 
-    //     {
-    //         var route = router.ParseRoute("/product/1");
-    //         Assert.Equal(
-    //             new Route(
-    //             "product-detail",
-    //                 new Dictionary<string, string>() {
-    //                     {"id", "1"}
-    //                 }
-    //             ),
-    //             route
-    //         );
-    //     }
+        {
+            var (routeKey, routeParameters) = router.ParseRoute("/product/1");
+            Assert.Equal("product_detail", routeKey);
+            Assert.Equal(
+                new Dictionary<string, string>() {
+                    {"id", "1"}
+                },
+                routeParameters
+            );
+        }
 
-    //     // And we can stringify routes
+        // And we can stringify routes
 
-    //     {
-    //         var path = router.StringifyRoute(new Route(
-    //            "all-products"
-    //         ));
-    //         Assert.Equal("/product/all", path);
-    //     }
+        {
+            var path = router.StringifyRoute("all-products");
+            Assert.Equal("/product/all", path);
+        }
 
-    //     {
-    //         var path = router.StringifyRoute(new Route(
-    //            "product-detail",
-    //             new Dictionary<string, string>() {
-    //                 {"id", "2"}
-    //             }
-    //         ));
-    //         Assert.Equal("/product/2", path);
-    //     }
+        {
+            var path = router.StringifyRoute(
+                "product-detail",
+                new Dictionary<string, string>() {
+                    {"id", "2"}
+                }
+            );
+            Assert.Equal("/product/2", path);
+        }
 
-    // }
+    }
 
 }

@@ -73,6 +73,21 @@ public class Router
     /// <param name="routeKey">
     /// route to stringify
     /// </param>
+    /// <returns>
+    /// string representing the route or null if the route is not found by name
+    /// </returns>
+    public string? StringifyRoute(
+        string routeKey
+    )
+    {
+        return StringifyRoute(routeKey, new Dictionary<string, string>());
+    }
+    /// <summary>
+    /// Convert a route to a path string.
+    /// </summary>
+    /// <param name="routeKey">
+    /// route to stringify
+    /// </param>
     /// <param name="routeParameters">
     /// parameters for the route
     /// </param>
