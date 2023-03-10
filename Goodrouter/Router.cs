@@ -54,7 +54,7 @@ public class Router
             this.MaximumParameterValueLength
         );
 
-        for (var index = 0; index < parameterNames.Length; index++)
+        for (var index = 0; index < parameterNames.Count; index++)
         {
             var parameterName = parameterNames[index];
             var parameterValue = parameterValues[index];
@@ -109,7 +109,7 @@ public class Router
             parameterValues.Add(parameterValue);
         }
 
-        return node.Stringify(parameterValues.ToArray());
+        return node.Stringify(parameterValues);
     }
 
 }

@@ -6,7 +6,7 @@ internal class RouteNode : IComparable<RouteNode>, IEquatable<RouteNode>
     public bool HasParameter { get; private set; }
     public string? RouteKey { get; private set; }
 
-    public string[] RouteParameterNames { get; private set; }
+    public IList<string> RouteParameterNames { get; private set; }
 
     private SortedSet<RouteNode> children = new SortedSet<RouteNode>();
     public IReadOnlySet<RouteNode> Children
@@ -62,7 +62,7 @@ internal class RouteNode : IComparable<RouteNode>, IEquatable<RouteNode>
         string anchor,
         bool hasParameter,
         string? routeKey,
-        string[] routeParameterNames
+        IList<string> routeParameterNames
     )
     {
         this.Anchor = anchor;
@@ -112,7 +112,7 @@ internal class RouteNode : IComparable<RouteNode>, IEquatable<RouteNode>
         return currentNode;
     }
 
-    public (string?, string[], string[]) Parse(
+    public (string?, IList<string>, IList<string>) Parse(
         string path,
         int maximumParameterValueLength
     )
@@ -185,10 +185,10 @@ internal class RouteNode : IComparable<RouteNode>, IEquatable<RouteNode>
     }
 
     public string Stringify(
-        string[] parameterValues
+        IList<string> parameterValues
     )
     {
-        var parameterIndex = parameterValues.Length;
+        var parameterIndex = parameterValues.Count;
         var path = "";
         var currentNode = this;
         while (currentNode != null)
@@ -211,7 +211,7 @@ internal class RouteNode : IComparable<RouteNode>, IEquatable<RouteNode>
         string anchor,
         bool hasParameter,
         string? routeKey,
-        string[] routeParameterNames,
+        IList<string> routeParameterNames,
         int commmonPrefixLength
     )
     {
@@ -274,7 +274,7 @@ internal class RouteNode : IComparable<RouteNode>, IEquatable<RouteNode>
         string anchor,
         bool hasParameter,
         string? routeKey,
-        string[] routeParameterNames
+        IList<string> routeParameterNames
     )
     {
         var newNode = new RouteNode(
@@ -290,7 +290,7 @@ internal class RouteNode : IComparable<RouteNode>, IEquatable<RouteNode>
     private RouteNode MergeJoin(
         RouteNode childNode,
         string? routeKey,
-        string[] routeParameterNames
+        IList<string> routeParameterNames
     )
     {
         if (
@@ -315,7 +315,7 @@ internal class RouteNode : IComparable<RouteNode>, IEquatable<RouteNode>
         string anchor,
         bool hasParameter,
         string? routeKey,
-        string[] routeParameterNames,
+        IList<string> routeParameterNames,
         int commmonPrefixLength
     )
     {
@@ -348,7 +348,7 @@ internal class RouteNode : IComparable<RouteNode>, IEquatable<RouteNode>
         string anchor,
         bool hasParameter,
         string? routeKey,
-        string[] routeParameterNames,
+        IList<string> routeParameterNames,
         int commmonPrefixLength
     )
     {
@@ -373,7 +373,7 @@ internal class RouteNode : IComparable<RouteNode>, IEquatable<RouteNode>
         string anchor,
         bool hasParameter,
         string? routeKey,
-        string[] routeParameterNames,
+        IList<string> routeParameterNames,
         int commmonPrefixLength
     )
     {
