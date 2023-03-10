@@ -34,7 +34,7 @@ public class RouterSpec
         {
             var (routeKey, routeParameters) = router.ParseRoute("/b/z/d");
             Assert.Equal("d", routeKey);
-            Assert.Equal(new Dictionary<string, string>() { { "x", "x" } }, routeParameters);
+            Assert.Equal(new Dictionary<string, string>() { { "x", "z" } }, routeParameters);
         }
 
     }
@@ -70,7 +70,7 @@ public class RouterSpec
 
         {
             var (routeKey, routeParameters) = router.ParseRoute("/product/1");
-            Assert.Equal("product_detail", routeKey);
+            Assert.Equal("product-detail", routeKey);
             Assert.Equal(
                 new Dictionary<string, string>() {
                     {"id", "1"}

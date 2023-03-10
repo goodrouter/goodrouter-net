@@ -141,7 +141,7 @@ internal class RouteNode : IComparable<RouteNode>, IEquatable<RouteNode>
 
             var value = path.Substring(0, index);
 
-            path = path.Substring(0, index);
+            path = path.Substring(index + this.Anchor.Length);
 
             parameterValues.Add(value);
         }
